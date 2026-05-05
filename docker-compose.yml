@@ -1,0 +1,82 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-drivesafe_local}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD:-drivesafe_local}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: services/auth-service/Dockerfile
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/drivesafe_auth
+      DB_USERNAME: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-drivesafe_local}
+      JWT_SECRET: ${JWT_SECRET:-change-this-local-secret-change-this-local-secret}
+      FRONTEND_ORIGINS: http://localhost:3000,http://localhost:5173
+      DEMO_DATA_ENABLED: ${DEMO_DATA_ENABLED:-true}
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  vehicle-service:
+    build:
+      context: .
+      dockerfile: services/vehicle-service/Dockerfile
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/drivesafe_vehicle
+      DB_USERNAME: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-drivesafe_local}
+      JWT_SECRET: ${JWT_SECRET:-change-this-local-secret-change-this-local-secret}
+      FRONTEND_ORIGINS: http://localhost:3000,http://localhost:5173
+      DEMO_DATA_ENABLED: ${DEMO_DATA_ENABLED:-true}
+    ports:
+      - "8082:8082"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  rental-service:
+    build:
+      context: .
+      dockerfile: services/rental-service/Dockerfile
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/drivesafe_rental
+      DB_USERNAME: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-drivesafe_local}
+      JWT_SECRET: ${JWT_SECRET:-change-this-local-secret-change-this-local-secret}
+      VEHICLE_SERVICE_URL: http://vehicle-service:8082
+      FRONTEND_ORIGINS: http://localhost:3000,http://localhost:5173
+      DEMO_DATA_ENABLED: ${DEMO_DATA_ENABLED:-true}
+    ports:
+      - "8083:8083"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      vehicle-service:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - auth-service
+      - vehicle-service
+      - rental-service
+
+volumes:
+  mysql_data:

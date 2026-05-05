@@ -1,0 +1,20 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/drivesafe_auth}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:drivesafe_local}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+app:
+  demo-data: ${DEMO_DATA_ENABLED:false}
+  jwt:
+    secret: ${JWT_SECRET:change-this-local-secret-change-this-local-secret}
+    expiration-minutes: 480
+  cors:
+    allowed-origins: ${FRONTEND_ORIGINS:http://localhost:5173,http://localhost:3000}

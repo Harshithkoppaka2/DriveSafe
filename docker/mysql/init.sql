@@ -1,0 +1,3 @@
+CREATE DATABASE IF NOT EXISTS drivesafe_auth;
+CREATE DATABASE IF NOT EXISTS drivesafe_vehicle;
+CREATE DATABASE IF NOT EXISTS drivesafe_rental;
