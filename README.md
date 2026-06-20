@@ -1,91 +1,174 @@
 # DriveSafe
 
-DriveSafe is a lightweight B2B rental-operations workspace for independent car-rental agencies. It is intentionally not a customer booking marketplace. The product is built around a few operational mistakes that are easy to make in small fleets: assigning a vehicle that is overdue for service, extending a rental into the next reservation, and losing the pickup/return condition trail.
+DriveSafe is a rental fleet operations application built for small and independent car rental agencies.
 
-## Product scope
+The idea came from problems I personally experienced while renting cars.
 
-- Fleet overview with vehicle readiness, active rentals, service alerts and utilization.
-- Vehicle inventory with odometer and oil-service tracking.
-- Automatic maintenance status: `READY`, `DUE_SOON`, `OVERDUE`.
-- Rental creation with a readiness gate and date-conflict validation.
-- Rental extensions that check future reservations before approval.
-- Pickup/return condition evidence with photos and notes.
-- Agency-scoped users with `ADMIN` and `EMPLOYEE` roles.
-- Demo workspace with realistic fleet, rental and inspection records for portfolio review.
+On a few trips, I picked up vehicles that started showing oil or service warnings shortly after leaving the rental location. That meant contacting the rental company, visiting one of their service partners, or swapping the car during the trip.
+
+I also ran into another issue: existing scratches or damage were not always properly documented before pickup. After returning the vehicle, it could become difficult to prove whether damage was already present.
+
+DriveSafe is my attempt to handle those problems before the vehicle leaves the rental lot.
+
+---
+
+## What DriveSafe Does
+
+DriveSafe helps rental agency employees answer a simple question before handing over a vehicle:
+
+**Is this vehicle actually ready to be rented?**
+
+The application combines vehicle maintenance, rental management, and pickup/return inspections in one place.
+
+A vehicle can be available in the fleet but still not be ready for a customer.
+
+For example, it may:
+
+- be overdue for maintenance
+- be approaching its service interval
+- be missing its pickup inspection
+- already have another reservation that conflicts with an extension
+
+DriveSafe keeps those checks as part of the rental workflow.
+
+---
+
+## Dashboard
+
+The dashboard gives agency staff a quick overview of current fleet operations.
+
+It shows:
+
+- total vehicles
+- vehicles ready for rental
+- vehicles due for service
+- overdue maintenance
+- active rentals
+- upcoming returns
+- operational alerts
+
+![DriveSafe Dashboard](docs/screenshots/dashboard.png)
+
+---
+
+## Vehicle Readiness
+
+Each vehicle stores its current mileage and maintenance information.
+
+DriveSafe calculates the vehicle status as:
+
+- `READY`
+- `DUE SOON`
+- `OVERDUE`
+
+An overdue vehicle should not be assigned to a new rental until the required service is completed and recorded.
+
+![Vehicle Management](docs/screenshots/vehicles.png)
+
+---
+
+## Maintenance Tracking
+
+Employees can see:
+
+- current vehicle mileage
+- last service mileage
+- service interval
+- mileage remaining before service
+- maintenance status
+
+The goal is to identify maintenance requirements before the customer discovers them during a trip.
+
+![Maintenance Tracking](docs/screenshots/maintenance.png)
+
+---
+
+## Rental Management
+
+DriveSafe keeps track of active, upcoming, and completed rentals.
+
+If a customer wants to extend a rental, the system checks the vehicle's upcoming reservations before approving the new return date.
+
+This prevents one customer's extension from creating a conflict with the next reservation.
+
+![Rental Management](docs/screenshots/rentals.png)
+
+---
+
+## Pickup and Return Inspections
+
+Before a vehicle is handed to a customer, its pickup condition can be documented with photos and notes.
+
+The return condition is recorded separately.
+
+This creates a before-and-after record connected to the same rental.
+
+The goal is to protect both sides:
+
+- customers should not be blamed for damage that was already present
+- rental agencies should have evidence when new damage occurs
+
+![Vehicle Inspections](docs/screenshots/inspections.png)
+
+---
+
+## Team Management
+
+DriveSafe supports two basic user roles:
+
+### Admin
+
+Admins can manage the agency, employees, vehicles, and operational data.
+
+### Employee
+
+Employees can work with rentals, inspections, vehicle mileage, and everyday fleet operations.
+
+![Team Management](docs/screenshots/team.png)
+
+---
 
 ## Architecture
 
+I intentionally kept the architecture small.
+
+The backend is split into three Spring Boot services:
+
+### Auth Service
+
+Handles:
+
+- authentication
+- JWT tokens
+- agency users
+- Admin / Employee roles
+
+### Vehicle Service
+
+Handles:
+
+- vehicle records
+- mileage
+- maintenance information
+- vehicle readiness
+
+### Rental Service
+
+Handles:
+
+- rentals
+- rental extensions
+- reservation conflicts
+- pickup inspections
+- return inspections
+
+The React frontend communicates with these services through REST APIs.
+
 ```text
-React frontend
-      |
-      +---- Auth Service (Spring Boot) ------- drivesafe_auth
-      +---- Vehicle Service (Spring Boot) ---- drivesafe_vehicle
-      +---- Rental Service (Spring Boot) ----- drivesafe_rental
-                    |
-                    +---- calls Vehicle Service for readiness
-
-MySQL 8.4 hosts the three service databases.
-```
-
-The services are deliberately small. There is no Kafka, Redis, Kubernetes, service discovery or distributed tracing because those would add complexity without helping the problems this project is trying to solve.
-
-## Stack
-
-React 18, Vite, Java 17, Spring Boot 3, Spring Security, JWT, Spring Data JPA, MySQL, Docker Compose, JUnit 5 and GitHub Actions.
-
-## Run
-
-```bash
-cp .env.example .env
-docker compose up --build
-```
-
-Open **http://localhost:3000**.
-
-MySQL is exposed on host port **3307** so the project can run even when a local MySQL installation is already using 3306. Inside Docker, the Spring services still connect to MySQL on port 3306.
-
-### Portfolio demo login
-
-```text
-Email:    demo@drivesafe.app
-Password: DriveSafe123!
-```
-
-The login screen has a **Use demo account** button that fills these credentials.
-
-If you previously ran an older DriveSafe build and want the new demo data, reset the Docker volume once:
-
-```bash
-docker compose down -v
-docker compose up --build
-```
-
-`down -v` deletes the local DriveSafe database volume, so only use it when you are fine resetting local project data.
-
-## Services
-
-| Service | Port | Responsibility |
-| --- | ---: | --- |
-| auth-service | 8081 | Agency registration, login, employee accounts and JWTs |
-| vehicle-service | 8082 | Vehicles, mileage, service records and readiness |
-| rental-service | 8083 | Rentals, extension conflicts and condition inspections |
-| frontend | 3000 | Staff-facing operations workspace |
-| MySQL | 3307 host / 3306 container | Service databases |
-
-## Core business rules
-
-### 1. Maintenance gate
-
-Vehicle Service calculates the next engine-oil service from the last service mileage, current odometer and service interval. An `OVERDUE` vehicle is returned as not rentable. Rental Service checks that readiness before creating the rental.
-
-### 2. Extension conflict check
-
-A requested extension is compared with the other blocking rentals for the same vehicle. The extension is rejected when the new range overlaps another reservation.
-
-### 3. Condition evidence
-
-Pickup and return photos/notes are stored against the rental rather than as a loose vehicle note, leaving a clear before/after trail for staff.
-
-## Project evolution
-
-DriveSafe is a modern rebuild of an earlier JavaFX/JDBC vehicle project. The original project helped establish the vehicle and database domain. This version separates the UI from backend business logic with React and Spring Boot and reframes the product as an operations tool for independent rental agencies.
+                    React
+                      |
+        -----------------------------
+        |             |             |
+   Auth Service  Vehicle Service  Rental Service
+        |             |             |
+        ----------- MySQL -----------
