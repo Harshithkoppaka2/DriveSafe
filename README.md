@@ -47,7 +47,8 @@ It shows:
 - upcoming returns
 - operational alerts
 
-![DriveSafe Dashboard](docs/screenshots/dashboard.png)
+![DriveSafe Dashboard](docs/screenshots/overview.png)
+
 
 ---
 
@@ -79,7 +80,7 @@ Employees can see:
 
 The goal is to identify maintenance requirements before the customer discovers them during a trip.
 
-![Maintenance Tracking](docs/screenshots/maintenance.png)
+![Maintenance Tracking](docs/screenshots/maintainance.png)
 
 ---
 
