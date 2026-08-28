@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { authApi, errorMessage } from '../api/http'
-import { useAuth } from '../state/AuthContext'
-import Icon from '../components/Icon'
+import { authApi, errorMessage } from '../api/http.js'
+import { useAuth } from '../state/AuthContext.jsx'
+import Icon from '../components/Icon.jsx'
 
 export default function RegisterPage() {
   const [form, setForm] = useState({ agencyName:'', adminName:'', email:'', password:'' })

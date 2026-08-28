@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { authApi, errorMessage } from '../api/http'
-import Modal from '../components/Modal'
-import Icon from '../components/Icon'
-import { initials, titleCase } from '../utils/format'
+import { authApi, errorMessage } from '../api/http.js'
+import Modal from '../components/Modal.jsx'
+import Icon from '../components/Icon.jsx'
+import { initials, titleCase } from '../utils/format.js'
 
 const empty = { name: '', email: '', password: '' }
 

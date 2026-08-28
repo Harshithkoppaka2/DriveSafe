@@ -1,4 +1,4 @@
-import Icon from './Icon'
+import Icon from './Icon.jsx'
 
 export default function Modal({ title, onClose, children }) {
   return <div className="modal-backdrop" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) onClose() }}>

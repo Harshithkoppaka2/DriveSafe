@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { attachToken } from '../api/http'
+import { attachToken } from '../api/http.js'
 
 const AuthContext = createContext(null)
 const STORAGE_KEY = 'drivesafe.session'

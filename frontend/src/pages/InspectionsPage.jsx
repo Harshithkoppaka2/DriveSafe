@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { rentalApi, vehicleApi } from '../api/http'
-import Icon from '../components/Icon'
-import { longDate, titleCase } from '../utils/format'
+import { rentalApi, vehicleApi } from '../api/http.js'
+import Icon from '../components/Icon.jsx'
+import { longDate, titleCase } from '../utils/format.js'
 
 export default function InspectionsPage() {
   const [rentals, setRentals] = useState([])

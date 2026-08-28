@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { rentalApi, vehicleApi } from '../api/http'
-import Icon from '../components/Icon'
-import { number, shortDate, titleCase } from '../utils/format'
+import { rentalApi, vehicleApi } from '../api/http.js'
+import Icon from '../components/Icon.jsx'
+import { number, shortDate, titleCase } from '../utils/format.js'
 
 export default function DashboardPage() {
   const [vehicles, setVehicles] = useState([])
@@ -49,7 +49,7 @@ export default function DashboardPage() {
       <Metric icon="car" label="Fleet ready" value={`${metrics.ready}/${vehicles.length}`} helper="Available for rental" tone="blue" />
       <Metric icon="rental" label="Active rentals" value={metrics.activeRentals} helper={`${metrics.reserved} upcoming`} tone="green" />
       <Metric icon="wrench" label="Service attention" value={metrics.attention} helper="Due soon or overdue" tone={metrics.attention ? 'amber' : 'green'} />
-      <Metric icon="mileage" label="Fleet utilization" value={`${metrics.utilization}%`} helper="Active + reserved" tone="violet" />
+      <Metric icon="mileage" label="Fleet utilization" value={`${metrics.utilization}%`} helper="Active + reserved" tone="blue" />
     </section>
 
     <div className="dashboard-grid">

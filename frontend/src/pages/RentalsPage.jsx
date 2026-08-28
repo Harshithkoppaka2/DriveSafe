@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { errorMessage, rentalApi, vehicleApi } from '../api/http'
-import Modal from '../components/Modal'
-import Icon from '../components/Icon'
-import { longDate, shortDate, titleCase } from '../utils/format'
+import { errorMessage, rentalApi, vehicleApi } from '../api/http.js'
+import Modal from '../components/Modal.jsx'
+import Icon from '../components/Icon.jsx'
+import { longDate, shortDate, titleCase } from '../utils/format.js'
 
 const emptyRental = { vehicleId: '', customerName: '', customerEmail: '', startDate: '', endDate: '' }
 const emptyInspection = { type: 'PICKUP', photoUrl: '', notes: '' }

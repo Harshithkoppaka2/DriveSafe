@@ -1,13 +1,13 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import { useAuth } from '../state/AuthContext'
-import Icon from './Icon'
-import { initials } from '../utils/format'
+import { useAuth } from '../state/AuthContext.jsx'
+import Icon from './Icon.jsx'
+import { initials } from '../utils/format.js'
 
 const navItems = [
   { to: '/', label: 'Overview', icon: 'dashboard', end: true },
   { to: '/vehicles', label: 'Vehicles', icon: 'car' },
-  { to: '/rentals', label: 'Rentals', icon: 'rental' },
   { to: '/maintenance', label: 'Maintenance', icon: 'wrench' },
+  { to: '/rentals', label: 'Rentals', icon: 'rental' },
   { to: '/inspections', label: 'Inspections', icon: 'inspect' }
 ]
 

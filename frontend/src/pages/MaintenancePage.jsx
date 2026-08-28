@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { errorMessage, vehicleApi } from '../api/http'
-import Modal from '../components/Modal'
-import Icon from '../components/Icon'
-import { number, titleCase } from '../utils/format'
+import { errorMessage, vehicleApi } from '../api/http.js'
+import Modal from '../components/Modal.jsx'
+import Icon from '../components/Icon.jsx'
+import { number, titleCase } from '../utils/format.js'
 
 export default function MaintenancePage() {
   const [vehicles, setVehicles] = useState([])
