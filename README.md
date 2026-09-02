@@ -61,7 +61,7 @@ DriveSafe calculates a vehicle status such as:
 - `DUE SOON`
 - `OVERDUE`
 
-If a vehicle is overdue for maintenance, it should not be assigned to a customer until the required service is completed.
+If a vehicle is overdue for maintenance, it should not be assigned to a Customer until the required service is completed.
 
 ![Vehicle Management](docs/screenshots/vehicles.png)
 
